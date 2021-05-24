@@ -1,8 +1,12 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.app.Application
+import android.location.Location
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.PointOfInterest
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseViewModel
@@ -20,6 +24,10 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     val selectedPOI = MutableLiveData<PointOfInterest>()
     val latitude = MutableLiveData<Double>()
     val longitude = MutableLiveData<Double>()
+
+    private val _locationMarker = MutableLiveData<Marker>()
+    val locationMarker: LiveData<Marker>
+        get() = _locationMarker
 
     /**
      * Clear the live data objects to start fresh next time the view model gets called
@@ -78,5 +86,9 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
             return false
         }
         return true
+    }
+
+    fun setLocation (marker: Marker) {
+        _locationMarker.value = marker
     }
 }
