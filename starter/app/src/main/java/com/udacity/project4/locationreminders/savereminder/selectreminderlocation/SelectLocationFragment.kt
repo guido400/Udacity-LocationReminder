@@ -39,14 +39,16 @@ class SelectLocationFragment : BaseFragment(){
     private val TAG = this::class.java.simpleName
 
     private lateinit var map: GoogleMap
-    private var marker:Marker? = null
+    private lateinit var marker:Marker
+    private lateinit var poi:PointOfInterest
+
 
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(),R.raw.map_style))
         enableMyLocation()
         setCameraOnCurrentLocation()
         setMapClick()
-
     }
 
     private val REQUEST_LOCATION_PERMISSION = 1
@@ -65,14 +67,6 @@ class SelectLocationFragment : BaseFragment(){
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-
-
-//        TODO: add style to the map
-//        TODO: put a marker to location that the user selected
-
-
-//        TODO: call this function after the user confirms on the selected location
-
         return binding.root
     }
 
@@ -88,8 +82,8 @@ class SelectLocationFragment : BaseFragment(){
     private fun onLocationSelected() {
 
         //send back the selected location details to the view model
-        if (marker != null) {
-            _viewModel.setLocation(marker!!)
+        if (this::poi.isInitialized) {
+            _viewModel.setLocation(poi)
         }
         //navigate back to the previous fragment to save the reminder
         _viewModel.navigationCommand.postValue(
@@ -179,10 +173,9 @@ class SelectLocationFragment : BaseFragment(){
                     if (result != null) {
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(
                             LatLng(result.latitude,
-                                result.longitude), 10f))
+                                result.longitude), 12f))
                     }
                 } else {
-                    Log.d(TAG, "Current location is null. Using defaults.")
                     Log.e(TAG, "Exception: %s", task.exception)
                 }
             }
@@ -194,15 +187,16 @@ class SelectLocationFragment : BaseFragment(){
     private fun setMapClick() {
         map.setOnPoiClickListener { poi ->
             //remove old marker
-            marker?.remove()
+            if (this::marker.isInitialized) { marker.remove() }
 
             //create new marker
-            marker = map.addMarker(
+            this.marker = map.addMarker(
                 MarkerOptions()
                     .position(poi.latLng)
                     .title(poi.name)
             )
 
+            this.poi = poi
             binding.fabSaveLocation.visibility = View.VISIBLE
         }
     }

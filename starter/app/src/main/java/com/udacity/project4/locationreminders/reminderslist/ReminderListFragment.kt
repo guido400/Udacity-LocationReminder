@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
 import com.udacity.project4.R
 import com.udacity.project4.authentication.AuthenticationActivity

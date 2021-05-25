@@ -14,6 +14,7 @@ import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import com.udacity.project4.locationreminders.reminderslist.ReminderListFragmentDirections
 import kotlinx.coroutines.launch
 
 class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSource) :
@@ -24,10 +25,6 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     val selectedPOI = MutableLiveData<PointOfInterest>()
     val latitude = MutableLiveData<Double>()
     val longitude = MutableLiveData<Double>()
-
-    private val _locationMarker = MutableLiveData<Marker>()
-    val locationMarker: LiveData<Marker>
-        get() = _locationMarker
 
     /**
      * Clear the live data objects to start fresh next time the view model gets called
@@ -68,7 +65,8 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
             )
             showLoading.value = false
             showToast.value = app.getString(R.string.reminder_saved)
-            navigationCommand.value = NavigationCommand.Back
+            navigationCommand.value =   NavigationCommand.To(
+                SaveReminderFragmentDirections.actionSaveReminderFragmentToReminderListFragment())
         }
     }
 
@@ -88,7 +86,10 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         return true
     }
 
-    fun setLocation (marker: Marker) {
-        _locationMarker.value = marker
+    fun setLocation (poi:PointOfInterest) {
+        reminderSelectedLocationStr.value = poi.name
+        selectedPOI.value = poi
+        latitude.value = poi.latLng.latitude
+        longitude.value = poi.latLng.longitude
     }
 }
