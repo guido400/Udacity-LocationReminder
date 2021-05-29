@@ -207,6 +207,4 @@ class SelectLocationFragment : BaseFragment(){
             this.poi = poi
         }
     }
-
-
 }

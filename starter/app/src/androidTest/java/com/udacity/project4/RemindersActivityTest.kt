@@ -79,11 +79,6 @@ class RemindersActivityTest :
 
     @Test
     fun testCreateNewReminderIsShownOnReminderList() {
-        //fake location selection
-        val saveReminderVm = SaveReminderViewModel(appContext,repository)
-        saveReminderVm.reminderSelectedLocationStr.postValue("test location")
-        saveReminderVm.latitude.postValue(0.1)
-        saveReminderVm.longitude.postValue(0.1)
 
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
 
