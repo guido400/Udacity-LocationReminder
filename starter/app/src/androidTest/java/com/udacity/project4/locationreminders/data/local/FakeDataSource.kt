@@ -1,7 +1,8 @@
-package com.udacity.project4.locationreminders.data
+package com.udacity.project4.locationreminders.data.local
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 import kotlinx.coroutines.runBlocking

@@ -31,7 +31,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_save"
         android:focusable="true"
-        android:visibility="gone"
         tools:visibility="visible"
         android:contentDescription="@string/save_location" />
 

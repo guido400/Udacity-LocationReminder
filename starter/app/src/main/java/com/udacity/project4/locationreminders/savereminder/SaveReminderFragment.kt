@@ -65,11 +65,10 @@ class SaveReminderFragment : BaseFragment() {
         binding.viewModel = _viewModel
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
 
+        //set textview text for poi selected in select location fragment
         _viewModel.selectedPOI.observe(viewLifecycleOwner, Observer { poi->
-
             binding.selectedLocation.text = poi.name
         })
-
 
 
         return binding.root
@@ -93,8 +92,6 @@ class SaveReminderFragment : BaseFragment() {
 
             newReminder = ReminderDataItem(title,description, location, latitude, longitude)
 
-//            TODO: use the user entered reminder details to:
-//             1) add a geofencing request
 
             //add a geofencing request
             checkPermissionsAndAddGeofence()
@@ -146,6 +143,10 @@ class SaveReminderFragment : BaseFragment() {
     }
 
 
+    /**
+     * Create geofence by creating geofence object, geofence request and pending intent for broadcast receiver.
+     * pending intent will use reminder object to create a notification when geofence entered.
+     */
     @SuppressLint("MissingPermission")
     private fun createGeofence() {
         val geofencePendingIntent: PendingIntent by lazy {

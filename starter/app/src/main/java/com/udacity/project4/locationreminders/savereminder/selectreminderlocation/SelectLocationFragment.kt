@@ -85,12 +85,19 @@ class SelectLocationFragment : BaseFragment(){
         if (this::poi.isInitialized) {
             _viewModel.setLocation(poi)
         }
+        else {
+            val defaultLatLng = LatLng(52.631662052519495, 4.749967658823256)
+            val defaultPoi = PointOfInterest(defaultLatLng,"Traditional Cheese Market","Cheese Market Alkmaar")
+            _viewModel.setLocation(defaultPoi)
+        }
         //navigate back to the previous fragment to save the reminder
         _viewModel.navigationCommand.postValue(
             NavigationCommand.To(
                 SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment()
             )
         )
+
+
     }
 
 
@@ -157,6 +164,7 @@ class SelectLocationFragment : BaseFragment(){
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
+                setCameraOnCurrentLocation()
             }
         }
     }
@@ -197,7 +205,6 @@ class SelectLocationFragment : BaseFragment(){
             )
 
             this.poi = poi
-            binding.fabSaveLocation.visibility = View.VISIBLE
         }
     }
 
