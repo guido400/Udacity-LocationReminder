@@ -18,6 +18,7 @@ import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.utils.EspressoIdlingResource.wrapEspressoIdlingResource
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -99,7 +100,7 @@ class RemindersActivityTest :
         onView(withId(R.id.fab_save_location)).perform(click())
 
         //save reminder and navigate to reminderlist
-        onView(withId(R.id.saveReminder)).perform(click())
+            onView(withId(R.id.saveReminder)).perform(click())
 
         //test added reminder is in list on screen
         onView(withId(R.id.reminderssRecyclerView))
