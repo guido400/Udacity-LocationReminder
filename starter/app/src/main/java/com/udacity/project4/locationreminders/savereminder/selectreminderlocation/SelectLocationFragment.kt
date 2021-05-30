@@ -23,12 +23,13 @@ import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import kotlin.math.roundToLong
 
 class SelectLocationFragment : BaseFragment(){
 
     //Use Koin to get the view model of the SaveReminder
-    override val _viewModel: SaveReminderViewModel by inject()
+    override val _viewModel: SaveReminderViewModel by sharedViewModel()
     private lateinit var binding: FragmentSelectLocationBinding
 
     // The entry point to the Fused Location Provider.
@@ -41,7 +42,8 @@ class SelectLocationFragment : BaseFragment(){
 
 
 
-    private val callback = OnMapReadyCallback { googleMap ->
+    private val callback = OnMapReadyCallback {
+            googleMap ->
         map = googleMap
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(),R.raw.map_style))
         enableMyLocation()

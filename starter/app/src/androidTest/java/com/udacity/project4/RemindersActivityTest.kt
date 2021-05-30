@@ -1,25 +1,33 @@
 package com.udacity.project4
 
 import android.app.Application
+import android.os.Bundle
+import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
-import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
+import com.udacity.project4.locationreminders.reminderslist.ReminderListFragment
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.util.ToastMatcher.Companion.onToast
 import com.udacity.project4.utils.EspressoIdlingResource.wrapEspressoIdlingResource
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.Matchers.not
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -93,6 +101,12 @@ class RemindersActivityTest :
         onView(withId(R.id.reminderDescription))
             .perform(typeText("test description"))
 
+        closeSoftKeyboard()
+
+        //navigate to select location fragment and back to get rid of snackbar
+        onView(withId(R.id.selectLocation)).perform(click())
+        pressBack()
+
         //navigate to select location fragment
         onView(withId(R.id.selectLocation)).perform(click())
 
@@ -102,6 +116,10 @@ class RemindersActivityTest :
         //save reminder and navigate to reminderlist
             onView(withId(R.id.saveReminder)).perform(click())
 
+        //check toast shown NOT ABLE to get this working
+        //val toastText = getApplicationContext<MyApp>().getString(R.string.geofences_added,"test title")
+        //onToast(toastText).check(matches(isDisplayed()))
+
         //test added reminder is in list on screen
         onView(withId(R.id.reminderssRecyclerView))
             .perform(
@@ -109,6 +127,43 @@ class RemindersActivityTest :
                 RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
                     ViewMatchers.hasDescendant(ViewMatchers.withText("Cheese Market Alkmaar"))
                 ))
+
+    }
+
+
+    @Test
+    fun testValidationSnackBarTitle () {
+        ActivityScenario.launch(RemindersActivity::class.java)
+
+        //navigate to saveReminder fragment by clicking fab
+        onView(withId(R.id.addReminderFAB)).perform(click())
+
+        //check if snackbar shown when title not there
+        onView(withId(R.id.saveReminder)).perform(click())
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText(R.string.err_enter_title)))
+    }
+
+    @Test
+    fun testValidationSnackBarLocation () {
+        ActivityScenario.launch(RemindersActivity::class.java)
+
+        //navigate to saveReminder fragment by clicking fab
+        onView(withId(R.id.addReminderFAB)).perform(click())
+
+        //add title and description
+        onView(withId(R.id.reminderTitle))
+            .perform(typeText("test title"))
+
+        onView(withId(R.id.reminderDescription))
+            .perform(typeText("test description"))
+
+        closeSoftKeyboard()
+
+        //check if snackbar shown when location not there
+        onView(withId(R.id.saveReminder)).perform(click())
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText(R.string.err_select_location)))
 
     }
 
