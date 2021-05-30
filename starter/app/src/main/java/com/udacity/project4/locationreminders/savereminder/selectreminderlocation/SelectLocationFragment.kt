@@ -20,12 +20,10 @@ import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
-import com.udacity.project4.locationreminders.reminderslist.ReminderListFragmentDirections
-import com.udacity.project4.locationreminders.savereminder.SaveReminderFragmentDirections
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
-import kotlinx.android.synthetic.main.fragment_select_location.*
 import org.koin.android.ext.android.inject
+import kotlin.math.roundToLong
 
 class SelectLocationFragment : BaseFragment(){
 
@@ -40,7 +38,7 @@ class SelectLocationFragment : BaseFragment(){
 
     private lateinit var map: GoogleMap
     private lateinit var marker:Marker
-    private lateinit var poi:PointOfInterest
+
 
 
     private val callback = OnMapReadyCallback { googleMap ->
@@ -82,13 +80,15 @@ class SelectLocationFragment : BaseFragment(){
     private fun onLocationSelected() {
 
         //send back the selected location details to the view model
-        if (this::poi.isInitialized) {
-            _viewModel.setLocation(poi)
+        if (this::marker.isInitialized) {
+            _viewModel.setLocation(marker)
         }
         else {
-            val defaultLatLng = LatLng(52.631662052519495, 4.749967658823256)
-            val defaultPoi = PointOfInterest(defaultLatLng,"Traditional Cheese Market","Cheese Market Alkmaar")
-            _viewModel.setLocation(defaultPoi)
+            val defaultLatLng = LatLng(52.631, 4.750)
+            val defaultMarker = map.addMarker(MarkerOptions()
+                .position(defaultLatLng)
+                .title("Cheese Market Alkmaar"))
+            _viewModel.setLocation(defaultMarker)
         }
         //navigate back to the previous fragment to save the reminder
         _viewModel.navigationCommand.postValue(
@@ -145,28 +145,6 @@ class SelectLocationFragment : BaseFragment(){
 
             return
         }
-
-        else
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_LOCATION_PERMISSION
-            )
-    }
-
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray) {
-        // Check if location permissions are granted and if so enable the
-        // location data layer.
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                enableMyLocation()
-                setCameraOnCurrentLocation()
-            }
-        }
     }
 
     @SuppressLint("MissingPermission")
@@ -204,7 +182,20 @@ class SelectLocationFragment : BaseFragment(){
                     .title(poi.name)
             )
 
-            this.poi = poi
         }
+
+        map.setOnMapClickListener { latLng ->
+
+            if (this::marker.isInitialized) { marker.remove() }
+
+            this.marker = map.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title(getString(R.string.location_selected))
+            )
+        }
+
+
+
     }
 }

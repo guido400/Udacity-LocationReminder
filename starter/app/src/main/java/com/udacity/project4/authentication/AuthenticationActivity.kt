@@ -35,6 +35,10 @@ class AuthenticationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthenticationBinding.inflate(layoutInflater)
 
+        //for development purpose
+        val intent = Intent(this, RemindersActivity::class.java)
+        startActivity(intent)
+
         binding.loginButton.setOnClickListener { launchSignInFlow() }
         setContentView(binding.root)
     }

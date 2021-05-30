@@ -44,5 +44,7 @@
     <string name="geofences_added">Geofence added for: %s</string>
     <string name="title">Title:</string>
     <string name="description">Description:</string>
+    <string name="toast_message_loc_permissions">please give location permissions to use the app functionalities properly</string>
+    <string name="location_selected">Location selected</string>
 
 </resources>
